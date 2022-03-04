@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Countdown</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Indie+Flower&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body,
+      html {
+        height: 100%;
+        min-height: 100%;
+      }
+
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 12px;
+        background: black;
+        color: white;
+      }
+
+      .countdown-container {
+        display: flex;
+        width: 100%;
+        max-width: 70%;
+        justify-content: space-between;
+      }
+
+      .days-container,
+      .hours-container,
+      .minutes-container,
+      .seconds-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background-color: rgba(0, 0, 0, 0.1);
+        border: 5px solid rgba(255, 255, 255, 0.3);
+        width: 140px;
+        height: 140px;
+        border-radius: 99px;
+      }
+
+      .days,
+      .hours,
+      .minutes,
+      .seconds {
+        font-size: 2.5em;
+        margin: 10px 0;
+        font-family: "Indie Flower", cursive;
+      }
+
+      .days-label,
+      .hours-label,
+      .minutes-label,
+      .seconds-label {
+        text-transform: uppercase;
+        margin-bottom: 5px;
+        font-family: "Indie Flower", cursive;
+      }
+
+      @media (max-width: 800px) {
+        .countdown-container {
+          max-width: 90%;
+        }
+
+        .days-container,
+        .hours-container,
+        .minutes-container,
+        .seconds-container {
+          font-size: 0.8em;
+          width: 100px;
+          height: 100px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <section class="countdown-container">
+      <div class="days-container">
+        <div class="days"></div>
+        <div class="days-label">days</div>
+      </div>
+
+      <div class="hours-container">
+        <div class="hours"></div>
+        <div class="hours-label">hours</div>
+      </div>
+
+      <div class="minutes-container">
+        <div class="minutes"></div>
+        <div class="minutes-label">minutes</div>
+      </div>
+
+      <div class="seconds-container">
+        <div class="seconds"></div>
+        <div class="seconds-label">seconds</div>
+      </div>
+    </section>
+    
+<script>
+const countDownClock = (input = "30 minutes") => {
+    const d = document;
+    const daysElement = d.querySelector(".days");
+    const hoursElement = d.querySelector(".hours");
+    const minutesElement = d.querySelector(".minutes");
+    const secondsElement = d.querySelector(".seconds");
+
+    let countdown;
+    let seconds = 0;
+
+    console.log("input", input);
+    if (typeof input === "string") {
+        const inputArray = input.split(" ");
+        inputArray.forEach((segment) => {
+            number = segment.match(/\d/g).join("");
+            format = segment.match(/[a-zA-Z]+/g).join("");
+            convertFormatStringAndParse(number, format);
+            console.log("segment", segment, number, format, seconds);
+        });
+    } else {
+        dateToSeconds(input);
+    }
+
+    timer(seconds);
+
+    function convertFormatStringAndParse(number, format) {
+        switch (format) {
+            case "seconds":
+            case "sec":
+            case "s":
+                seconds += number;
+                break;
+            case "minutes":
+            case "min":
+            case "m":
+                seconds += number * 60;
+                break;
+            case "hours":
+            case "hour":
+            case "h":
+                seconds += number * 60 * 60;
+                break;
+            case "days":
+            case "day":
+            case "d":
+                seconds += number * 60 * 60 * 24;
+                break;
+            default:
+                console.error("Invalid format provided", format);
+        }
+    }
+
+    function dateToSeconds(date) {
+        seconds = date.getTime() / 1000;
+    }
+
+    function timer(seconds) {
+        const now = Date.now();
+        const then = now + seconds * 1000;
+
+        if (window.countdownInterval) {
+            clearInterval(window.countdownInterval);
+        }
+
+        window.countdownInterval = setInterval(() => {
+            const secondsLeft = Math.round((then - Date.now()) / 1000);
+
+            if (secondsLeft <= 0) {
+                clearInterval(window.countdownInterval);
+                return;
+            }
+
+            displayTimeLeft(secondsLeft);
+        }, 1000);
+    }
+
+    function displayTimeLeft(seconds) {
+        daysElement.textContent = Math.floor(seconds / 86400);
+        hoursElement.textContent = Math.floor((seconds % 86400) / 3600);
+        minutesElement.textContent = Math.floor(
+            ((seconds % 86400) % 3600) / 60
+        );
+        secondsElement.textContent =
+            seconds % 60 < 10 ? `0${seconds % 60}` : seconds % 60;
+    }
+};
+
+countDownClock("20min");
+</script>
+  </body>
+</html>
